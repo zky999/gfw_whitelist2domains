@@ -2,8 +2,6 @@
 # 
 # gfw_whitelist2domains -- Extract domains from gfw_whitelist pac file
 # 
-# Copyright 2014 zky999. All rights reserved.
-#  
 # Error codes
 ERR_DOWNLOAD_PAC_FAILED=1
 ERR_EXTRACT_DOMAINS_FAILED=2
