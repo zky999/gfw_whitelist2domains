@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# 
+# gfw_whitelist2domains -- Extract domains from gfw_whitelist pac file
+# 
+# Copyright 2014 zky999. All rights reserved.
+#  
+# Error codes
+ERR_DOWNLOAD_PAC_FAILED=1
+ERR_EXTRACT_DOMAINS_FAILED=2
+
+# Download gfw_whitelist pac file (Thanks nowall!)
+pac_url='https://raw.githubusercontent.com/n0wa11/gfw_whitelist/master/whitelist.pac'
+printf "Downloading gfw_whitelist pac file: %s..." "${pac_url}" >&2
+pac="$(curl -so - whitelist.pac "${pac_url}")"
+[[ $? -ne 0 ]] && {
+	printf "failed!\n" >&2
+	printf "Download gfw_whitelist pac file failed, please check your network connectivity.\n" >&2
+	exit "$ERR_DOWNLOAD_PAC_FAILED"
+}
+printf "OK\n" >&2
+
+# Extract domains from gfw_whitelist pac file
+printf "Extracing domains from gfw_whitelist pac file...\n" >&2
+awk '$1 == "[", $1 ~ "],?" {if ($1 !~ /^\/\// && $1 != "[" && $1 !~ /],?/) print}' <<<"$pac" |awk -F\" '{print $2}' |sort |uniq
+[[ $? -ne 0 ]] && {
+	printf "Extrtacting domains from gfw_whitelist pac file failed, please make sure you have installed these programs: awk, sort and uniq.\n" >&2
+	exit "$ERR_EXTRACT_DOMAINS_FAILED"
+}
+printf "Extrtacting domains from gfw_whitelist pac file sucessfully.\n" >&2
