@@ -30,7 +30,7 @@ printf "OK\n" >&2
 
 # Extract domains from gfw_whitelist pac file
 printf "Extracting domains from gfw_whitelist pac file...\n" >&2
-awk '$1 == "[", $1 ~ "],?" {if ($1 !~ /^\/\// && $1 != "[" && $1 !~ /],?/) print}' <<<"$pac" |awk -F\" '{print $2}' |sort |uniq
+awk '$1 == "[", $1 ~ "],?" {if ($1 !~ /^\/\// && $1 != "[" && $1 !~ /],?/) print}' <<<"$pac" |awk -F\" '{if ($2 != ".wikipedia.org" && $2 != ".wsj.com" && $2 != ".google-analytics.com") print $2}' |sort |uniq 
 [[ $? -ne 0 ]] && {
 	printf "Extracting domains from gfw_whitelist pac file failed.\n" >&2
 	exit "$ERR_EXTRACT_DOMAINS_FAILED"
