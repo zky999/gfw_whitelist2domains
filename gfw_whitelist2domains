@@ -3,8 +3,19 @@
 # gfw_whitelist2domains -- Extract domains from gfw_whitelist pac file
 # 
 # Error codes
-ERR_DOWNLOAD_PAC_FAILED=1
-ERR_EXTRACT_DOMAINS_FAILED=2
+ERR_REQUIRED_PROGRAM_NOT_FOUND=1
+ERR_DOWNLOAD_PAC_FAILED=2
+ERR_EXTRACT_DOMAINS_FAILED=3
+
+# Requirements
+programs=(curl awk sort uniq)
+for p in ${programs[@]}; do
+	type -a "$p" >/dev/null 2>&1  
+	[[ $? -ne 0 ]] && {
+		printf "Cannot find the required program. Please run this program with \"%s\" installed.\n" "$p" >&2
+		exit "$ERR_REQUIRED_PROGRAM_NOT_FOUND"
+	}
+done
 
 # Download gfw_whitelist pac file (Thanks nowall!)
 pac_url='https://raw.githubusercontent.com/n0wa11/gfw_whitelist/master/whitelist.pac'
@@ -12,7 +23,7 @@ printf "Downloading gfw_whitelist pac file: %s..." "${pac_url}" >&2
 pac="$(curl -so - whitelist.pac "${pac_url}")"
 [[ $? -ne 0 ]] && {
 	printf "failed!\n" >&2
-	printf "Download gfw_whitelist pac file failed, please check your network connectivity.\n" >&2
+	printf "Download gfw_whitelist pac file failed. Please check your network connection.\n" >&2
 	exit "$ERR_DOWNLOAD_PAC_FAILED"
 }
 printf "OK\n" >&2
@@ -21,7 +32,7 @@ printf "OK\n" >&2
 printf "Extracting domains from gfw_whitelist pac file...\n" >&2
 awk '$1 == "[", $1 ~ "],?" {if ($1 !~ /^\/\// && $1 != "[" && $1 !~ /],?/) print}' <<<"$pac" |awk -F\" '{print $2}' |sort |uniq
 [[ $? -ne 0 ]] && {
-	printf "Extracting domains from gfw_whitelist pac file failed, please make sure you have installed these programs: awk, sort and uniq.\n" >&2
+	printf "Extracting domains from gfw_whitelist pac file failed.\n" >&2
 	exit "$ERR_EXTRACT_DOMAINS_FAILED"
 }
 printf "Extracting domains from gfw_whitelist pac file sucessfully.\n" >&2
