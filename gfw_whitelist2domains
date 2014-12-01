@@ -17,8 +17,9 @@ for p in ${programs[@]}; do
 	}
 done
 
-# Download gfw_whitelist pac file (Thanks nowall!)
-pac_url='https://raw.githubusercontent.com/n0wa11/gfw_whitelist/master/whitelist.pac'
+# Download gfw_whitelist pac file (Thanks n0wall!)
+#pac_url='https://raw.githubusercontent.com/n0wa11/gfw_whitelist/master/whitelist.pac'
+pac_url='https://raw.githubusercontent.com/zky999/gfw_whitelist/master/whitelist.pac'
 printf "Downloading gfw_whitelist pac file: %s..." "${pac_url}" >&2
 pac="$(curl -so - whitelist.pac "${pac_url}")"
 [[ $? -ne 0 ]] && {
